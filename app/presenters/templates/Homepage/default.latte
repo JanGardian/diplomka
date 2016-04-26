@@ -1,0 +1,65 @@
+{* This is the welcome page, you can delete it *}
+
+{block content}
+	<div class="row">
+		<div class="col-md-12">
+			<div class="jumbotron">
+				<h1>Diplomka</h1>
+			</div>
+		</div>
+
+		<div class="col-md-12">
+			<div class="well">
+			<h2>Filter</h2>
+			{form filterForm}
+				<div class="row">
+					<div class="col-md-2">
+						{input tech}
+					</div>
+					<div class="col-md-2">
+						{input country}
+					</div>
+				</div>
+				{input submit}
+			{/form}
+			</div>
+		</div>
+
+		<div class="col-md-12">
+			{ifset $data}
+				<script type="text/javascript">
+					google.charts.load('current', {'packages':['bar']});
+					google.charts.setOnLoadCallback(drawChart);
+					function drawChart() {
+						var data = google.visualization.arrayToDataTable({$data});
+
+						var options = {
+						  chart: {
+						    title: 'Nazov grafu',
+						    subtitle: 'bla bla',
+						  },
+						axes: {
+							y: {
+								0 : { label: 'blabla' }
+							}
+						}
+						};
+
+						var chart1 = new google.charts.Bar(document.getElementById('graf1'));
+						chart1.draw(data, options);
+
+						var chart2 = new google.charts.Bar(document.getElementById('graf2'));
+						chart2.draw(data, options);
+
+						var chart3 = new google.charts.Bar(document.getElementById('graf3'));
+						chart3.draw(data, options);
+					}
+				</script>
+
+				<div class="well">
+					<div id="graf1" style="height: 300px;"></div>
+					<div id="graf2"></div>
+					<div id="graf3"></div>
+				</div>
+			{/ifset}
+		</div>
