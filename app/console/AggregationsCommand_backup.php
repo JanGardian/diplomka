@@ -7,7 +7,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class AggregationsCommand extends Command
+class AggregationsCommandBackup extends Command
 {
 	/** @var Nette\Database\Context @inject */
    	public $database;

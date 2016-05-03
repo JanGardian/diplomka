@@ -5,7 +5,7 @@ namespace App\Model;
 use Nette;
 use Nette\Database\Context;
 
-class Stats
+class DatabaseUpdate
 {
     /** @var Nette\Database\Context */
     private $database;

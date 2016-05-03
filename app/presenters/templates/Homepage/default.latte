@@ -1,65 +1,126 @@
 {* This is the welcome page, you can delete it *}
 
 {block content}
-	<div class="row">
-		<div class="col-md-12">
-			<div class="jumbotron">
-				<h1>Diplomka</h1>
-			</div>
-		</div>
+<div class="row">
 
-		<div class="col-md-12">
-			<div class="well">
-			<h2>Filter</h2>
-			{form filterForm}
-				<div class="row">
-					<div class="col-md-2">
-						{input tech}
-					</div>
-					<div class="col-md-2">
-						{input country}
-					</div>
-				</div>
-				{input submit}
-			{/form}
-			</div>
-		</div>
-
-		<div class="col-md-12">
-			{ifset $data}
-				<script type="text/javascript">
-					google.charts.load('current', {'packages':['bar']});
-					google.charts.setOnLoadCallback(drawChart);
-					function drawChart() {
-						var data = google.visualization.arrayToDataTable({$data});
-
-						var options = {
-						  chart: {
-						    title: 'Nazov grafu',
-						    subtitle: 'bla bla',
-						  },
-						axes: {
-							y: {
-								0 : { label: 'blabla' }
-							}
-						}
-						};
-
-						var chart1 = new google.charts.Bar(document.getElementById('graf1'));
-						chart1.draw(data, options);
-
-						var chart2 = new google.charts.Bar(document.getElementById('graf2'));
-						chart2.draw(data, options);
-
-						var chart3 = new google.charts.Bar(document.getElementById('graf3'));
-						chart3.draw(data, options);
-					}
-				</script>
-
+	<div class="col-md-12">
+		<div class="row">
+			<div id="porovnanie-krajin" class="col-md-6">
 				<div class="well">
-					<div id="graf1" style="height: 300px;"></div>
-					<div id="graf2"></div>
-					<div id="graf3"></div>
+					<h2>Porovnanie krajín</h2>
+					{form compareCountriesForm}
+						<div class="row">
+							<div class="col-md-6">
+								{input country}
+							</div>
+							<div class="col-md-6">
+								{input tech}
+							</div>
+							<div class="col-md-6">
+								{input stat}
+							</div>
+						</div>
+						{input submit}
+					{/form}
 				</div>
-			{/ifset}
+			</div>
+
+			<div id="porovnanie-operatorov" class="col-md-6">
+				<div class="well">
+				<h2>Porovnanie operátorov</h2>
+				{form compareOperatorsForm}
+					<div class="row">
+						<div class="col-md-6">
+							{input tech}
+						</div>
+						<div class="col-md-6">
+							{input country}
+						</div>
+						<div class="col-md-6">
+							{input stat}
+						</div>
+					</div>
+					{input submit}
+				{/form}
+				</div>
+			</div>
 		</div>
+	</div>
+
+	<div class="col-md-12">
+		{ifset $dataDownloadSpeed}
+			<script type="text/javascript">
+				google.charts.load('current', {'packages':['corechart', 'bar']});
+				google.charts.setOnLoadCallback(drawChart);
+				
+				$(window).resize(function() {
+				    if(this.resizeTO) clearTimeout(this.resizeTO);
+				    this.resizeTO = setTimeout(function() {
+				        $(this).trigger('resizeEnd');
+				    }, 500);
+				});
+				
+				$(window).on('resizeEnd', function() {
+				    drawChart();
+				});
+				
+				function drawChart() {
+					var dataDownloadSpeed = google.visualization.arrayToDataTable({$dataDownloadSpeed});
+					var dataLatency = google.visualization.arrayToDataTable({$dataLatency});
+					var dataQoe = google.visualization.arrayToDataTable({$dataQoe});
+
+
+					var optionsDownloadSpeed = {
+					  legend: { position: 'top', maxLines: 4 },
+					  title: 'Download Speed',
+					  hAxis: {
+					    title: 'Dowload Speed'
+				           
+				          },
+				          vAxis: {
+				            title: 'Mbit/s'
+				          }
+                                        };
+					var optionsLatency = {
+					  title: 'Latency',
+                                          hAxis: { 
+                                            title: 'Latency'
+                                           
+                                          },
+                                          vAxis: { 
+                                            title: 'Mbit/ms'
+                                          }
+                                        };
+
+					var optionsQoe = {
+					  title: 'Qoe',
+                                          hAxis: { 
+                                            title: 'Qoe'
+                                           
+                                          },
+                                          vAxis: { 
+                                            title: 'MOS'
+                                          }
+                                        };
+
+
+					var chart1 = new google.visualization.ColumnChart(document.getElementById('graf-download-speed'));
+					chart1.draw(dataDownloadSpeed, optionsDownloadSpeed);
+					
+					var chart2 = new google.visualization.ColumnChart(document.getElementById('graf-latency'));
+					chart2.draw(dataLatency, optionsLatency);
+				
+					var chart3 = new google.visualization.ColumnChart(document.getElementById('graf-qoe'));
+					chart3.draw(dataQoe, optionsQoe);
+					
+				}
+			</script>
+
+			<div class="well">
+				<h2>{$graphTitle}</h2>
+				<div id="graf-download-speed" style="height: 600px;"></div>
+				<div id="graf-latency" style="height: 300px;"></div>
+				<div id="graf-qoe" style="height: 300px;"></div>
+			</div>
+		{/ifset}
+	</div>

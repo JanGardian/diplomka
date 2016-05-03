@@ -8,15 +8,45 @@
 
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 
+	<script src="https://code.jquery.com/jquery-1.12.3.min.js" integrity="sha256-aaODHAgvwQW1bFOGXMeX+pC4PZIPsvn2h1sArYOhgXQ=" crossorigin="anonymous"></script>	
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	{ifset $maxCountries}
+		<script type="text/javascript">
+			$( document ).ready(function() {
+				$("select#frm-compareCountriesForm-country").on('click', 'option', function() {
+				    if ($("select#frm-compareCountriesForm-country option:selected").length > {$maxCountries}) {
+					$(this).removeAttr("selected");
+					while($("select#frm-compareCountriesForm-country option:selected").length > {$maxCountries}) {
+						$("select#frm-compareCountriesForm-country option:selected").first().removeAttr("selected");
+					}
+				    }
+				});
+			});
+		</script>
+	{/ifset}
 </head>
 
 <body>
+	<nav class="navbar navbar-inverse">
+	  <div class="container-fluid">
+	    <div class="navbar-header">
+	      <a class="navbar-brand" href="{link Homepage:default}">Diplomka</a>
+	    </div>
+	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	      <ul class="nav navbar-nav">
+		<li><a href="#porovnanie-krajin">Porovnanie krajín</a></li>
+		<li><a href="#porovnanie-operatorov">Porovnanie operátorov krajiny</a></li>
+	      </ul>
+	    </div>
+	  </div>
+	</nav>
+
 	<div class="container">
 		<div n:foreach="$flashes as $flash" n:class="flash, $flash->type">{$flash->message}</div>
 		{include content}
 	</div>
+
 	{block scripts}
 		<script src="https://nette.github.io/resources/js/netteForms.min.js"></script>
 	{/block}
