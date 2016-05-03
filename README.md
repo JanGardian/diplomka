@@ -2,6 +2,7 @@
 
 ## installation
  - clone repository `git clone https://github.com/JanGardian/diplomka.git`
+ - https://getcomposer.org/doc/00-intro.md#installation-linux-unix-osx
  - run `composer install` to install libraries
  - `mv app/config/config.local-example.neon app/config/config.local.neon`
  - setup DB connection parameters in app/config/config.local.neon
