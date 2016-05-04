@@ -71,8 +71,7 @@
 					var dataLatency = google.visualization.arrayToDataTable({$dataLatency});
 					var dataQoe = google.visualization.arrayToDataTable({$dataQoe});
 
-					var downSpeed = "Graph showing Download Speed for ";
-                                        downSpeed += {$graphText};
+					var downSpeed = "Graph showing " + {$measure} + " Download Speed for " + {$graphText};
 
 					var optionsDownloadSpeed = {
 					  title: downSpeed,
@@ -115,8 +114,7 @@
 					  }
                                         };
 
-					var latency = "Graph showing Latency for ";
-					latency += {$graphText};
+					var latency = "Graph showing " + {$measure} + " Latency for " + {$graphText};
 
 					var optionsLatency = {
 					  title: latency,
@@ -159,9 +157,8 @@
                                           }
                                         };
 
-					var qoe = "Quality of Experience graph for ";
-                                        qoe += {$graphText};
-
+					var qoe = "Graph showing " + {$measure} + " Quality of Experience for " + {$graphText};
+					
 					var optionsQoe = {
 					  title: qoe,
 					  titleTextStyle: {

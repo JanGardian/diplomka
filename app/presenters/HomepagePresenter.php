@@ -411,6 +411,7 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
 		$this->template->graphTitle = 'Graphs comparing countries for radio technology ' .$values['tech'];
 		$this->template->hAxisTitle = 'Countries per technology';
 		$this->template->graphText = 'countries:';
+		$this->template->measure = $values['stat'];
 
 	}
 
@@ -444,5 +445,6 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
 		$this->template->graphTitle = 'Graphs comparing operators from '.$this->countries[strtoupper($values['country'])];
 		$this->template->hAxisTitle = 'Mobile operators per technology';
 		$this->template->graphText = 'operators:';
+		$this->template->measure = $values['stat'];
 	}
 }
