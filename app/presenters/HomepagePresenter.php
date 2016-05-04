@@ -9,7 +9,7 @@ use Nette\Application\UI;
 
 class HomepagePresenter extends Nette\Application\UI\Presenter
 {
-	protected $maxCountries = 5;
+	protected $maxCountries = 10;
     	/** @var Nette\Database\Context */
     	private $database;
     	/** @var \App\Model\Stats */
@@ -299,8 +299,8 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
 		$form->addSelect('tech', 'Technologie', $radioTechList);
 		$form->addMultiSelect('country', 'Zem:', $countries)
 			->setAttribute('size', 12);
-		$form->addRadioList('stat', '', array('median' => 'Medián', 'average' => 'Priemer'))->setDefaultValue('median');
-		$form->addSubmit('submit', 'Vykreslit');
+		$form->addRadioList('stat', '', array('median' => 'Median', 'average' => 'Average'))->setDefaultValue('median');
+		$form->addSubmit('submit', 'Draw Graph');
 		$form->onSuccess[] = array($this, 'compareCountriesSuccess');
 
 		// setup form rendering
@@ -349,8 +349,8 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
 		$form = new UI\Form();
 		$form->addCheckboxList('tech', 'Technologie', $radioTechList);
 		$form->addSelect('country', 'Zem:', $countries);
-		$form->addRadioList('stat', '', array('median' => 'Medián', 'average' => 'Priemer'))->setDefaultValue('median');
-		$form->addSubmit('submit', 'Vykreslit');
+		$form->addRadioList('stat', '', array('median' => 'Median', 'average' => 'Average'))->setDefaultValue('median');
+		$form->addSubmit('submit', 'Draw Graph');
 		$form->onSuccess[] = array($this, 'compareOperatorsSuccess');
 
 		// setup form rendering
@@ -408,7 +408,9 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
 			$data[] = $line;
 			$this->template->{'data'.$measure} = $data;
 		}
-		$this->template->graphTitle = 'Grafy krajin pre technologiu '.$values['tech'];
+		$this->template->graphTitle = 'Graphs comparing countries for radio technology ' .$values['tech'];
+		$this->template->hAxisTitle = 'Countries per technology';
+		$this->template->graphText = 'countries:';
 
 	}
 
@@ -439,6 +441,8 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
 			}
 			$this->template->{'data'.$measure} = $data;
 		}
-		$this->template->graphTitle = 'Grafy operátorov pre krajinu '.$this->countries[strtoupper($values['country'])];
+		$this->template->graphTitle = 'Graphs comparing operators from '.$this->countries[strtoupper($values['country'])];
+		$this->template->hAxisTitle = 'Mobile operators per technology';
+		$this->template->graphText = 'operators:';
 	}
 }
