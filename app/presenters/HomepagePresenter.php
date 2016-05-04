@@ -412,7 +412,18 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
 		$this->template->hAxisTitle = 'Countries per technology';
 		$this->template->graphText = 'countries:';
 		$this->template->measure = $values['stat'];
+		$vAxisMin = 10;
+                $method = ($values['stat'] == 'median')
+                        ? 'medQoe'
+                        : 'avgQoe';
 
+                foreach ($records as $line) { 
+                        if ($line->$method != 0) {
+                                if ($line->$method <= $vAxisMin) { $vAxisMin = $line->$method; }
+                        }
+                }
+                $vAxisMin = $vAxisMin - $vAxisMin * 0.2;
+                $this->template->vAxisMin = $vAxisMin;
 	}
 
 	public function compareOperatorsSuccess(UI\Form $form, $values)
@@ -446,5 +457,17 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
 		$this->template->hAxisTitle = 'Mobile operators per technology';
 		$this->template->graphText = 'operators:';
 		$this->template->measure = $values['stat'];
+		$vAxisMin = 10;
+		$method = ($values['stat'] == 'median')
+		  	? 'medQoe'
+  			: 'avgQoe';
+
+		foreach ($records as $line) { 
+			if ($line->$method != 0) {
+				if ($line->$method <= $vAxisMin) { $vAxisMin = $line->$method; }
+			}
+		}
+		$vAxisMin = $vAxisMin - $vAxisMin * 0.2;
+		$this->template->vAxisMin = $vAxisMin;
 	}
 }
