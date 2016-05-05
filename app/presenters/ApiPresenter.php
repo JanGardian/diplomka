@@ -37,18 +37,20 @@ class ApiPresenter extends Nette\Application\UI\Presenter
                         ->order('isoCountryCode ASC')
                         ->fetchPairs('isoCountryCode', 'isoCountryCode');
 
-	// NEW via nettte
+	// IF you want to read request for API from URL itself uncomment bellow code for getting Technologies
 	$radTechs = (array)$this->request->getParameter('tech');
 	
-	// POST get technology
+	// IF you want to read request for API from POST please uncomment bellow code for getting Technologies
 	//$tech = $this->request->getPost('tech');
 
 	if (!$radTechs) {
 		$this->sendResponse(new Nette\Application\Responses\JsonResponse($records));
 	}
+
+	// IF you want to read request for API from URL itself uncomment bellow code line for getting countries
 	$countries = (array)$this->request->getParameter('country');
 	
-	// POST get country
+	// IF you want to read request for API from POST please uncomment bellow code line for getting countries
 	//$tech = $this->request->getPost('country');
 
 	if (!$countries) {
@@ -56,7 +58,7 @@ class ApiPresenter extends Nette\Application\UI\Presenter
 	}
 	
 
-	// send countries and technologies to service getData which communicate with database
+	// send countries and technologies to service getDataOperators which communicate with database
 	$records = $this->stats->getDataOperators($countries, $radTechs);
 	
 	// output of API in form of JSON array of requested technologies for requested countries
@@ -81,18 +83,20 @@ class ApiPresenter extends Nette\Application\UI\Presenter
                         ->order('isoCountryCode ASC')
                         ->fetchPairs('isoCountryCode', 'isoCountryCode');
 
-	// NEW via nettte
+	// IF you want to read request for API from URL itself uncomment bellow code for getting Technologies
 	$radTechs = (array)$this->request->getParameter('tech');
 	
-	// POST get technology
+	// IF you want to read request for API from POST please uncomment bellow code for getting Technologies
 	//$tech = $this->request->getPost('tech');
 
 	if (!$radTechs) {
 		$this->sendResponse(new Nette\Application\Responses\JsonResponse($records));
 	}
+
+	// IF you want to read request for API from URL itself uncomment bellow code for getting countries
 	$countries = (array)$this->request->getParameter('country');
 	
-	// POST get country
+	// IF you want to read request for API from POST please uncomment bellow code for getting Technologies
 	//$tech = $this->request->getPost('country');
 
 	if (!$countries) {
@@ -100,7 +104,7 @@ class ApiPresenter extends Nette\Application\UI\Presenter
 	}
 	
 
-	// send countries and technologies to service getData which communicate with database
+	// send countries and technologies to service getDataCountries which communicate with database
 	$records = $this->stats->getDataCountries($countries, $radTechs, true);
 	
 	// output of API in form of JSON array of requested technologies for requested countries
