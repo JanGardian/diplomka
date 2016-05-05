@@ -9,11 +9,13 @@ use Nette\Application\UI;
 
 class HomepagePresenter extends Nette\Application\UI\Presenter
 {
+	/** @var maxCountries variable specify how many countries can be selected for Country graph */
 	protected $maxCountries = 10;
     	/** @var Nette\Database\Context */
     	private $database;
     	/** @var \App\Model\Stats */
     	private $stats;
+	/** @var countries contain Iso Country Codes and english names for each country */
 	private $countries = array(
 		'AF' => 'Afghanistan',
 		'AX' => 'Aland Islands',
@@ -277,7 +279,7 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
 		#echo "$t";
 	}
 
-
+	// Function to generate data for selection in form for Country graphs
 	protected function createComponentCompareCountriesForm()
 	{
 		// Getting list of all existing iso country codes from AggregatedData table
@@ -295,6 +297,7 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
 			->order('radioTechnology ASC')
 			->fetchPairs('radioTechnology', 'radioTechnology');
 
+		// Create form with Select and multiselect
 		$form = new UI\Form();
 		$form->addSelect('tech', 'Technologie', $radioTechList);
 		$form->addMultiSelect('country', 'Zem:', $countries)
@@ -303,7 +306,7 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
 		$form->addSubmit('submit', 'Draw Graph');
 		$form->onSuccess[] = array($this, 'compareCountriesSuccess');
 
-		// setup form rendering
+		// setup selection form renderrling
 		$renderer = $form->getRenderer();
 		$renderer->wrappers['controls']['container'] = NULL;
 		$renderer->wrappers['pair']['container'] = 'div class=form-group';
@@ -312,6 +315,7 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
 		$renderer->wrappers['label']['container'] = 'div class="col-sm-3 control-label"';
 		$renderer->wrappers['control']['description'] = 'span class=help-block';
 		$renderer->wrappers['control']['errorcontainer'] = 'span class=help-block';
+
 		// make form and controls compatible with Twitter Bootstrap
 		$form->getElementPrototype()->class('form-horizontal');
 		foreach ($form->getControls() as $control) {
@@ -329,6 +333,7 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
 		return $form;
 	}
 
+	// Function to generate data for selection in form for Operators graphs
 	protected function createComponentCompareOperatorsForm()
 	{
 		// Getting list of all existing iso country codes from AggregatedData table
@@ -346,6 +351,7 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
 			->order('radioTechnology ASC')
 			->fetchPairs('radioTechnology', 'radioTechnology');
 
+		// Create form with Select and multiselect
 		$form = new UI\Form();
 		$form->addCheckboxList('tech', 'Technologie', $radioTechList);
 		$form->addSelect('country', 'Zem:', $countries);
@@ -353,7 +359,7 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
 		$form->addSubmit('submit', 'Draw Graph');
 		$form->onSuccess[] = array($this, 'compareOperatorsSuccess');
 
-		// setup form rendering
+		// setup operator form rendering
 		$renderer = $form->getRenderer();
 		$renderer->wrappers['controls']['container'] = NULL;
 		$renderer->wrappers['pair']['container'] = 'div class=form-group';
@@ -362,6 +368,7 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
 		$renderer->wrappers['label']['container'] = 'div class="col-sm-3 control-label"';
 		$renderer->wrappers['control']['description'] = 'span class=help-block';
 		$renderer->wrappers['control']['errorcontainer'] = 'span class=help-block';
+
 		// make form and controls compatible with Twitter Bootstrap
 		$form->getElementPrototype()->class('form-horizontal');
 		foreach ($form->getControls() as $control) {
@@ -379,12 +386,17 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
 		return $form;
 	}
 
+	/** Function that receives selected value from web form for Countries
+	 get data from DB and provide those in array to javascript in Latte for graphs */
 	public function compareCountriesSuccess(UI\Form $form, $values)
 	{
+		// Load data from AggregatedDataOperators table via stats service for countries and technologies from select form
 		$records = $this->stats->getDataCountries($values['country'], $values['tech']);
-		
+	
+		// $measures is array on which we iterate average/med values	
 		$measures = array('DownloadSpeed', 'Latency', 'Qoe');
 		foreach($measures as $measure) {
+			// JS graphs have AxB matrix array where first line contain Country
 			$data = array(array('Technology'));
 			foreach($values['country'] as $key => $country) {
 				if ($key >= $this->maxCountries) {
@@ -392,6 +404,8 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
 				}
 				$data[0][] = $this->countries[strtoupper($country)];
 			}
+			/** JS graphs have AxB matrix array where each next line contain technology name 
+                        and then values of avg/med for each operator in order how operators are add in first line of matrix */	
 			$line = array($values['tech']);
 			foreach($records as $key => $record) {
 				if ($key >= $this->maxCountries) {
@@ -408,10 +422,13 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
 			$data[] = $line;
 			$this->template->{'data'.$measure} = $data;
 		}
+
+		// Setting text strings to be used in graphs and differs per average and median
 		$this->template->graphTitle = 'Graphs comparing countries for radio technology ' .$values['tech'];
 		$this->template->hAxisTitle = 'Countries per technology';
 		$this->template->graphText = 'countries:';
 		$this->template->measure = $values['stat'];
+		// Setting minimal value from which will Y axis start. It is minimal|non-zero value - 20% of this value
 		$vAxisMin = 10;
                 $method = ($values['stat'] == 'median')
                         ? 'medQoe'
@@ -426,18 +443,27 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
                 $this->template->vAxisMin = $vAxisMin;
 	}
 
+	/** Function that receives selected value from web form for Operators
+         get data from DB and provide those in array to javascript in Latte for graphs */
 	public function compareOperatorsSuccess(UI\Form $form, $values)
 	{
+		// Load data from AggregatedDataOperators table via stats service for countries and technologies from select form
 		$records = $this->stats->getDataOperators(array($values['country']), $values['tech']);
 
+		// $measures is array on which we iterate average/med values
 		$measures = array('DownloadSpeed', 'Latency', 'Qoe');
+
+		// Main loop to read data from DB and convert it to array format for JS graphs
 		foreach($measures as $measure) {
+			// JS graphs have AxB matrix array where first line contain Operators
 			$data = array(array('Technology'));
 			foreach($records as $record) {
 				if (!in_array($record->operator, $data[0])) {
 					$data[0][] = $record->operator;
 				}
 			}
+			/** JS graphs have AxB matrix array where each next line contain technology name 
+			and then values of avg/med for each operator in order how operators are add in first line of matrix */
 			foreach($values['tech'] as $tech) {
 				$line = array($tech);
 				foreach($records as $record) {
@@ -453,10 +479,13 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
 			}
 			$this->template->{'data'.$measure} = $data;
 		}
+
+		// Setting text strings to be used in graphs and differs per average and median
 		$this->template->graphTitle = 'Graphs comparing operators from '.$this->countries[strtoupper($values['country'])];
 		$this->template->hAxisTitle = 'Mobile operators per technology';
 		$this->template->graphText = 'operators:';
 		$this->template->measure = $values['stat'];
+		// Setting minimal value from which will Y axis start. It is minimal|non-zero value - 20% of this value.
 		$vAxisMin = 10;
 		$method = ($values['stat'] == 'median')
 		  	? 'medQoe'

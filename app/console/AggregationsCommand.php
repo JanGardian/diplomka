@@ -20,10 +20,12 @@ class AggregationsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+	// function to remove value from array based on value and not key
 	function removeFromArray($array, $value) {
                 return array_values(array_diff($array, array($value)));
         }
 
+	// function to calculate Median value from array of numbers
 	function calculateMedian($array)
         {
                 $Count = count($array);
@@ -37,8 +39,10 @@ class AggregationsCommand extends Command
                 return $median;
         }
 	
+	// function to calculate median and average value for specific database selection
 	function calculateMeasures($selection, $limit)
 	{
+		// initializing variables with zero value
 	        $avgSpeed = 0;
 	        $avgLatency = 0;
 	        $avgQoe = 0;
@@ -49,7 +53,7 @@ class AggregationsCommand extends Command
 		// $measures is array on which we count average value in aggregation
 	        $measures = array('qoe','downloadSpeed','latency');
 	
-		// Counting average from loading data, loop is based per measure
+		// Counting average and median from loaded data in selection, loop is based per measure
                 foreach ($measures as $measure) {
                         $measured = array();
                         // No measured data found for specific country and specific technology
@@ -106,6 +110,8 @@ class AggregationsCommand extends Command
         $radioTechList = $mData->select('DISTINCT radioTechnology')
                         ->order('radioTechnology ASC')
                         ->fetchPairs('radioTechnology', 'radioTechnology');
+
+	// Removing empty and unknown technology type from list and adding new technology Wi-Fi 
         $radioTechList = removeFromArray($radioTechList, "");
 	$radioTechList = removeFromArray($radioTechList, "unknown");
         array_push($radioTechList, "Wi-Fi");
@@ -120,7 +126,7 @@ class AggregationsCommand extends Command
 	
 
 
-	// Main loop is based on each country, another subloop based on radio technology type and for each operator separetly
+	// Main loop is based on each country, another subloop based on radio technology type
         foreach ($countryList as $country) {
                 
 		// Calculating averages and medians per Country and radio technology and saving to table AggregatedDataCountries
@@ -155,7 +161,7 @@ class AggregationsCommand extends Command
                                         'medLatency' => (double) $measured[4],
                                         'medQoe' => (double) $measured[5],
                                 ));
-                        // UPDATE data as they are already in table 
+                        // UPDATE data with new calculated values in AggregatedDataCountries table 
                         } else {
                                 $this->database->query('UPDATE AggregatedDataCountries SET ? WHERE isoCountryCode = ? AND radioTechnology = ?', array(
                                         'avgDownloadSpeed' => (double) $measured[0],
@@ -180,7 +186,7 @@ class AggregationsCommand extends Command
                 foreach ($operatorList as $operator) {
                         foreach ($radioTechList as $radTech) {
 
-                                // Loading database selection to nette table format, selection for each country and technology
+                                // Loading database selection to nette table format, selection for each country, technology and operator
 				$mData = $this->database->table('MeasuredData');
                                 if ($radTech <> "Wi-Fi") { 
                                         $selection = $mData->select('isoCountryCode, radioTechnology, qoe, downloadSpeed, latency')
@@ -211,7 +217,7 @@ class AggregationsCommand extends Command
 						'medLatency' => (double) $measured[4],
 						'medQoe' => (double) $measured[5],
                                         ));
-                                // UPDATE data as they are already in table 
+                                // UPDATE data with new calculated value in AggregatedDataOperators table
                                 } else {
                                         $this->database->query('UPDATE AggregatedDataOperators SET ? WHERE isoCountryCode = ? AND radioTechnology = ? AND operator = ?', array(
 						'avgDownloadSpeed' => (double) $measured[0],
