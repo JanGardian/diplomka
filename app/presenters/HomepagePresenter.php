@@ -290,12 +290,14 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
 		foreach($countries as $key => $countryCode) {
 			$countries[$key] = $this->countries[strtoupper($countryCode)];
 		}
-
+		asort($countries);
+		
 		// Getting list of all existing radio technology types from AggregatedData table
 		$aData = $this->database->table('AggregatedDataCountries');
 		$radioTechList = $aData->select('DISTINCT radioTechnology')
 			->order('radioTechnology ASC')
 			->fetchPairs('radioTechnology', 'radioTechnology');
+		asort($radioTechList);
 
 		// Create form with Select and multiselect
 		$form = new UI\Form();
@@ -344,12 +346,14 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
 		foreach($countries as $key => $countryCode) {
 			$countries[$key] = $this->countries[strtoupper($countryCode)];
 		}
+		asort($countries);
 
 		// Getting list of all existing radio technology types from AggregatedData table
 		$aData = $this->database->table('AggregatedDataOperators');
 		$radioTechList = $aData->select('DISTINCT radioTechnology')
 			->order('radioTechnology ASC')
 			->fetchPairs('radioTechnology', 'radioTechnology');
+		asort($radioTechList);
 
 		// Create form with Select and multiselect
 		$form = new UI\Form();
