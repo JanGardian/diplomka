@@ -193,12 +193,14 @@ class AggregationsCommand extends Command
                                                            ->where('isoCountryCode = ? AND radioTechnology = ? AND operator = ? AND reachableVia <> ? AND Filtered = ?', $country, $radTech, $operator, "Wi-Fi", 0)
                                                            ->order('saved_date DESC')
                                                            ->limit($dataLimit);
-                                } else {
+                                } else { continue; }
+				// this part of code was calculating average and median value for technology Wi-Fi for each operator
+				/* else {
 					$selection = $mData->select('isoCountryCode, radioTechnology, qoe, downloadSpeed, latency')
                                                            ->where('isoCountryCode = ?  AND operator = ? AND reachableVia = ? AND Filtered = ?', $country, $operator, "Wi-Fi", 0)
                                                            ->order('saved_date DESC')
                                                            ->limit($dataLimit);
-				} 
+				} */ 
 				
 				$measured = calculateMeasures($selection, $dataLimit);
 
