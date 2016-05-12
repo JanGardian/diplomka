@@ -2,6 +2,7 @@
 namespace App\Console;
 
 use Nette;
+use Nette\Utils\DateTime;
 use Nette\Database\Context;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -101,6 +102,7 @@ class AggregationsCommand extends Command
 
         // Initial setup for $dataLimit value, how many last records in table MeasuredData will be used for aggregation
         $dataLimit = 1000;
+	$currentTimeStamp = new DateTime();
 
         // $measures is array on which we count average value in aggregation
         $measures = array('qoe','downloadSpeed','latency');
@@ -122,7 +124,6 @@ class AggregationsCommand extends Command
                         ->order('isoCountryCode ASC')
                         ->fetchPairs('isoCountryCode', 'isoCountryCode');
         $countryList = removeFromArray($countryList, "");
-
 	
 
 
@@ -170,6 +171,7 @@ class AggregationsCommand extends Command
                                         'medDownloadSpeed' => (double) $measured[3],
                                         'medLatency' => (double) $measured[4],
                                         'medQoe' => (double) $measured[5],
+					'calculated_date' => $currentTimeStamp,
                                         ), $country, $radTech);
                         }
 
@@ -228,6 +230,7 @@ class AggregationsCommand extends Command
                                                 'medDownloadSpeed' => (double) $measured[3],
                                                 'medLatency' => (double) $measured[4],
                                                 'medQoe' => (double) $measured[5],
+						'calculated_date' => $currentTimeStamp,
                                                 ), $country, $radTech, $operator);
                                 }
                         }
