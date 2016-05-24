@@ -41,7 +41,7 @@ class ApiPresenter extends Nette\Application\UI\Presenter
 	$radTechs = (array)$this->request->getParameter('tech');
 	
 	// IF you want to read request for API from POST please uncomment bellow code for getting Technologies
-	//$tech = $this->request->getPost('tech');
+	//$radTechs = $this->request->getPost('tech');
 
 	if (!$radTechs) {
 		$this->sendResponse(new Nette\Application\Responses\JsonResponse($records));
@@ -51,7 +51,7 @@ class ApiPresenter extends Nette\Application\UI\Presenter
 	$countries = (array)$this->request->getParameter('country');
 	
 	// IF you want to read request for API from POST please uncomment bellow code line for getting countries
-	//$tech = $this->request->getPost('country');
+	//$countries = $this->request->getPost('country');
 
 	if (!$countries) {
 		$this->sendResponse(new Nette\Application\Responses\JsonResponse($records));
@@ -87,7 +87,7 @@ class ApiPresenter extends Nette\Application\UI\Presenter
 	$radTechs = (array)$this->request->getParameter('tech');
 	
 	// IF you want to read request for API from POST please uncomment bellow code for getting Technologies
-	//$tech = $this->request->getPost('tech');
+	//$radTechs = $this->request->getPost('tech');
 
 	if (!$radTechs) {
 		$this->sendResponse(new Nette\Application\Responses\JsonResponse($records));
@@ -97,7 +97,7 @@ class ApiPresenter extends Nette\Application\UI\Presenter
 	$countries = (array)$this->request->getParameter('country');
 	
 	// IF you want to read request for API from POST please uncomment bellow code for getting Technologies
-	//$tech = $this->request->getPost('country');
+	//$countries = $this->request->getPost('country');
 
 	if (!$countries) {
 		$this->sendResponse(new Nette\Application\Responses\JsonResponse($records));
